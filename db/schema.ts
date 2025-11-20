@@ -28,7 +28,7 @@ export const task = pgTable("task", {
     .references(() => project.id, { onDelete: "cascade" }),
   title: text("title").notNull(),
   description: text("description").notNull(),
-  due_date: date("due_date").notNull(),
+  due_date: text("due_date").notNull(),
   priority: text("priority").notNull(),
   status: text("status").notNull(),
   created_at: timestamp("created_at").defaultNow().notNull(),
