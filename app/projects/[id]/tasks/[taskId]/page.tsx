@@ -13,9 +13,9 @@ import {
 import { getTasksById } from "@/server/tasks/getTasksById";
 import { updateTask } from "@/server/tasks/updateTask";
 
-const TaskDetail = async ({ params }: { params: { id: string } }) => {
-  const { id } = await params;
-  const tasksData = await getTasksById(id);
+const TaskDetail = async ({ params }: { params: { taskId: string } }) => {
+  const { taskId } = await params;
+  const tasksData = await getTasksById(taskId);
   const task = tasksData[0];
 
   function getRemainingDays(dueDateString: string) {

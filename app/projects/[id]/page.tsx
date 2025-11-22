@@ -138,7 +138,7 @@ const ProjectDetail = async ({ params }: { params: { id: string } }) => {
                       </td>
                       <td className="px-6 py-4 text-right flex gap-2 items-center justify-end">
                         <Link
-                          href={`/tasks/${task.id}`}
+                          href={`/projects/${project.id}/tasks/${task.id}`}
                           className="py-1 px-2 border border-black shadow-md rounded text-sm bg-white hover:bg-black hover:text-white text-black transition-all cursor-pointer"
                         >
                           View Details
@@ -256,7 +256,7 @@ const ProjectDetail = async ({ params }: { params: { id: string } }) => {
                       </td>
                       <td className="px-6 py-4 text-right flex gap-2 items-center justify-end">
                         <Link
-                          href={`/tasks/${task.id}`}
+                          href={`/projects/${project.id}/tasks/${task.id}`}
                           className="py-1 px-2 border border-black shadow-md rounded text-sm bg-white hover:bg-black hover:text-white text-black transition-all cursor-pointer"
                         >
                           View Details
