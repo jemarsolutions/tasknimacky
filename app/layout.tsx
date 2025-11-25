@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { Orbitron } from "next/font/google";
 import "./globals.css";
 import { AppSidebar } from "@/components/AppSidebar";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 const orbitron = Orbitron({
   subsets: ["latin"],
@@ -26,10 +27,12 @@ export default function RootLayout({
         className={`${orbitron.className} antialiased`}
         suppressHydrationWarning={true}
       >
-        <SidebarProvider>
-          <AppSidebar />
-          <main className="w-full">{children}</main>
-        </SidebarProvider>
+        <NuqsAdapter>
+          <SidebarProvider>
+            <AppSidebar />
+            <main className="w-full">{children}</main>
+          </SidebarProvider>
+        </NuqsAdapter>
       </body>
     </html>
   );

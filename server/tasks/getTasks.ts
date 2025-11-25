@@ -1,13 +1,13 @@
+"use server";
 import { db } from "@/db/drizzle";
-import { task } from "@/db/schema";
-import { desc, eq } from "drizzle-orm";
-import { getAllProjects } from "../projects/getProjects";
+import { project, task } from "@/db/schema";
+import { desc, eq, ilike, and } from "drizzle-orm";
+import { unstable_cache } from "next/cache";
+import { Task } from "@/components/shared/types";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 export async function getAllTasks(id: string) {
-  const projectsData = await getAllProjects();
-  if (!projectsData || projectsData.length === 0) {
-    return [];
-  }
   const allTasks = await db
     .select()
     .from(task)
@@ -15,3 +15,25 @@ export async function getAllTasks(id: string) {
     .orderBy(desc(task.created_at));
   return allTasks;
 }
+
+export const getAllTasksForSearch = unstable_cache(
+  async (search: string, session): Promise<Task[]> => {
+    const rows = await db
+      .select()
+      .from(task)
+      .leftJoin(project, eq(project.id, task.projectId))
+      .where(
+        and(
+          ilike(task.title, `%${search}%`),
+          eq(project.userId, session.user.id || "")
+        )
+      )
+      .orderBy(desc(task.created_at));
+
+    // Map joined rows to the Task shape by extracting the task property
+    const tasks: Task[] = (rows as any[]).map((r) => r.task);
+    return tasks;
+  },
+  ["tasks"],
+  { tags: ["tasks"] }
+);

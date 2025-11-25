@@ -1,3 +1,4 @@
+import { loadSearchParams } from "@/app/SearchParams";
 import AddTaskForm from "@/components/forms/tasks/AddTaskForm";
 import ProductsFilter from "@/components/ProductsFilter";
 import {
@@ -8,17 +9,37 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { auth } from "@/lib/auth";
+import { getAllProjects } from "@/server/projects/getProjects";
 import { getProjectsById } from "@/server/projects/getProjectsById";
-import { getAllTasks } from "@/server/tasks/getTasks";
+import { getAllTasksForSearch } from "@/server/tasks/getTasks";
 import { revalidateTag } from "next/cache";
+import { headers } from "next/headers";
 import Link from "next/link";
+import { SearchParams } from "nuqs/server";
 
-const ProjectDetail = async ({ params }: { params: { id: string } }) => {
-  const { id } = await params;
-  const projectData = await getProjectsById(id);
-  const project = projectData[0];
-  const projectId = project.id;
-  const tasks = await getAllTasks(projectId);
+type PageProps = {
+  searchParams: Promise<SearchParams>;
+};
+
+const TasksPage = async ({ searchParams }: { searchParams: SearchParams }) => {
+  const projectsData = await getAllProjects();
+  const project = projectsData[0];
+
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  const { search } = await loadSearchParams(searchParams);
+  const tasks = await getAllTasksForSearch(
+    search,
+    session?.user.id ? session : null
+  );
+
+  async function refetchProducts() {
+    "use server";
+    revalidateTag("products", "");
+  }
 
   return (
     <div className="flex flex-col items-start justify-start h-screen w-full relative p-5">
@@ -47,6 +68,9 @@ const ProjectDetail = async ({ params }: { params: { id: string } }) => {
             </DialogContent>
           </Dialog>
         </div>
+      </div>
+      <div className="w-full">
+        <ProductsFilter refetchProducts={refetchProducts} />
       </div>
       <div className="w-full mt-10">
         <h1 className="font-bold text-sm mb-2 flex gap-2 items-center">
@@ -289,4 +313,4 @@ const ProjectDetail = async ({ params }: { params: { id: string } }) => {
   );
 };
 
-export default ProjectDetail;
+export default TasksPage;
