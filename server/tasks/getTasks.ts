@@ -4,8 +4,6 @@ import { project, task } from "@/db/schema";
 import { desc, eq, ilike, and } from "drizzle-orm";
 import { unstable_cache } from "next/cache";
 import { Task } from "@/components/shared/types";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
 
 export async function getAllTasks(id: string) {
   const allTasks = await db

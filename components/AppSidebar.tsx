@@ -154,6 +154,9 @@ export async function AppSidebar() {
                   className="w-[--radix-popper-anchor-width]"
                 >
                   <DropdownMenuItem>
+                    <Link href="/tasks">View All Tasks</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
                     <form action={signOutAction}>
                       <button type="submit">Sign out</button>
                     </form>
